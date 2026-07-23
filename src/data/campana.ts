@@ -2,7 +2,7 @@ import type { Emision } from "./types";
 
 // Estado de la campaña activa del anunciante (mock).
 
-export const ordenId = "VK-2043";
+export const ordenId = "DK-2043";
 
 /** Avance de emisión de la campaña (0–1). */
 export const avanceCampana = 0.52;

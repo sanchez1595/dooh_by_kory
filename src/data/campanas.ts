@@ -5,7 +5,7 @@ import type { Campana } from "./types";
 // sesión (p. ej. re-subir creativo pasa "rechazada" → "en-revision").
 export const campanas: Campana[] = [
   {
-    id: "VK-2043",
+    id: "DK-2043",
     vallaId: 1,
     nombre: "Pantalla LED Autopista Norte",
     fechas: "12 – 25 ago 2026",
@@ -14,7 +14,7 @@ export const campanas: Campana[] = [
     monto: "$43,1M",
   },
   {
-    id: "VK-2044",
+    id: "DK-2044",
     vallaId: 4,
     nombre: "Pantalla Zona T",
     fechas: "1 – 7 sep 2026",
@@ -23,7 +23,7 @@ export const campanas: Campana[] = [
     monto: "$14,4M",
   },
   {
-    id: "VK-2041",
+    id: "DK-2041",
     vallaId: 7,
     nombre: "Valla Digital Milla de Oro",
     fechas: "20 jul – 2 ago 2026",
@@ -34,7 +34,7 @@ export const campanas: Campana[] = [
     motivoRechazo: "Resolución del creativo por debajo de 1440×800 px",
   },
   {
-    id: "VK-2032",
+    id: "DK-2032",
     vallaId: 3,
     nombre: "Valla Aeropuerto El Dorado",
     fechas: "1 – 30 jun 2026",

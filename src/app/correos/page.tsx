@@ -36,7 +36,7 @@ export default function CorreosPage() {
             <div className="flex flex-col gap-1 rounded-[10px] border border-slate-200 bg-white px-3.5 py-3 text-[11.5px] text-slate-600">
               <div>
                 <b className="font-semibold text-slate-400">De:</b> DOOH by Kory
-                &lt;hola@vallas.kory.co&gt;
+                &lt;hola@dooh.kory.co&gt;
               </div>
               <div>
                 <b className="font-semibold text-slate-400">Para:</b> {e.para}
@@ -51,7 +51,7 @@ export default function CorreosPage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/assets/blanco.svg" alt="Kory" className="h-4" />
                 <span className="text-[10px] font-bold tracking-[0.1em] text-lavender-200 uppercase">
-                  Vallas
+                  DOOH
                 </span>
               </div>
               <div className="flex flex-col gap-3.5 px-[22px] py-6">
@@ -93,7 +93,7 @@ export default function CorreosPage() {
               <div className="border-t border-slate-100 bg-slate-50 px-[22px] py-3.5 text-[10px] leading-[1.6] text-slate-400">
                 DOOH by Kory · Bogotá, Colombia
                 <br />
-                Recibes este correo por tu cuenta en vallas.kory.co ·{" "}
+                Recibes este correo por tu cuenta en dooh.kory.co ·{" "}
                 <span className="text-kory">Preferencias</span>
               </div>
             </div>

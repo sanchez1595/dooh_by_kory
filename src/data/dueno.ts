@@ -84,7 +84,7 @@ export const cuentaBancaria = "Bancolombia ahorros ····4421";
 
 export const payouts: Payout[] = [
   {
-    id: "VK-2043",
+    id: "DK-2043",
     marca: "Café Andino S.A.S.",
     detalle: "Autopista Norte · 12–25 ago · neto tras 8% Kory",
     estado: "pagado",
@@ -92,7 +92,7 @@ export const payouts: Payout[] = [
     fecha: "26 ago 2026",
   },
   {
-    id: "VK-2044",
+    id: "DK-2044",
     marca: "Nequi × Bancolombia",
     detalle: "Av. NQS · 1–30 sep · retenido hasta emisión",
     estado: "custodia",
@@ -100,7 +100,7 @@ export const payouts: Payout[] = [
     fecha: "al finalizar",
   },
   {
-    id: "VK-2032",
+    id: "DK-2032",
     marca: "Frutto Snacks",
     detalle: "Autopista Norte · jun 2026",
     estado: "pagado",
@@ -108,7 +108,7 @@ export const payouts: Payout[] = [
     fecha: "2 jul 2026",
   },
   {
-    id: "VK-2028",
+    id: "DK-2028",
     marca: "Agencia Piloto Media",
     detalle: "Zona T · may 2026",
     estado: "pagado",

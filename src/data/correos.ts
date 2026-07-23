@@ -21,7 +21,7 @@ export function getCorreos(ctx: CorreoContext): Correo[] {
   return [
     {
       para: "pagos@cafeandino.co",
-      asunto: "¡Recibimos tu solicitud! Ya está en revisión · VK-2043",
+      asunto: "¡Recibimos tu solicitud! Ya está en revisión · DK-2043",
       pill: "Solicitud en revisión",
       pillBg: "#F0EDFF",
       pillFg: "#724CF5",
@@ -55,7 +55,7 @@ export function getCorreos(ctx: CorreoContext): Correo[] {
     },
     {
       para: "pagos@cafeandino.co",
-      asunto: "¡Tu anuncio ya está al aire! 🎉 · VK-2043",
+      asunto: "¡Tu anuncio ya está al aire! 🎉 · DK-2043",
       pill: "✓ Campaña activa",
       pillBg: "#ECFDF5",
       pillFg: "#16A34A",
@@ -72,7 +72,7 @@ export function getCorreos(ctx: CorreoContext): Correo[] {
     },
     {
       para: "pagos@cafeandino.co",
-      asunto: "Tu creativo no fue aprobado — te devolvimos el 100% · VK-2041",
+      asunto: "Tu creativo no fue aprobado — te devolvimos el 100% · DK-2041",
       pill: "Reembolso completado",
       pillBg: "#FEF2F2",
       pillFg: "#B91C1C",
