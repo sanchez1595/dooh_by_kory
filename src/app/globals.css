@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Kory Design System — tokens (de colors_and_type.css)
+   ============================================================ */
+@theme {
+  --color-kory: #724cf5;
+  --color-kory-hover: #5b2fd6;
+  --color-kory-light: #9b7bf7;
+  --color-kory-tint: #f0edff;
+  --color-kory-pale: #f8f6ff;
+  --color-kory-deep: #4c1d95;
+  --color-kory-darkest: #1e1b4b;
+  --color-kory-edge: #1a0a3e;
+  --color-kory-mid: #2d1b69;
+
+  --color-lavender-100: #e0d4ff;
+  --color-lavender-200: #c4b5fd;
+  --color-lavender-tint: #e8e0ff;
+  --color-lavender-border: #e5ddff;
+  --color-lavender-strong: #d5c4fa;
+  --color-lavender-dash: #c9bff0;
+
+  --color-ink: #0f172a;
+
+  /* El diseño no define line-height en los tamaños de texto (usa `normal`);
+     anulamos los line-heights que Tailwind empaqueta con cada tamaño. */
+  --text-xs--line-height: normal;
+  --text-sm--line-height: normal;
+  --text-base--line-height: normal;
+  --text-lg--line-height: normal;
+  --text-xl--line-height: normal;
+  --text-2xl--line-height: normal;
+  --text-3xl--line-height: normal;
+  --text-4xl--line-height: normal;
+  --text-5xl--line-height: normal;
+
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 8px 32px rgba(114, 76, 245, 0.18);
+  --shadow-dropdown: 0 8px 32px rgba(15, 23, 42, 0.16);
+  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.25);
+  --shadow-booking: 0 8px 32px rgba(114, 76, 245, 0.12);
+}
+
+/* Las fuentes vienen de next/font como variables runtime — requieren
+   @theme inline para que las utilidades font-sans/font-mono las usen. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: #fafafa;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: normal;
+    color: #0f172a;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background: #e8e0ff;
+  }
+
+  :focus-visible {
+    outline: 2px solid #724cf5;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
