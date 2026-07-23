@@ -1,4 +1,4 @@
-# Vallas by Kory
+# DOOH by Kory
 
 Marketplace para rentar vallas digitales (pantallas LED) por campaña, 100%
 online y sin intermediarios. Demo **solo frontend** con Next.js (App Router),

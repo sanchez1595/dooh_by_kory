@@ -1,4 +1,4 @@
-# Vallas by Kory — Diseño: de demo a plataforma completa
+# DOOH by Kory — Diseño: de demo a plataforma completa
 
 Fecha: 2026-07-22 · Estado: **pendiente de aprobación del usuario**
 Wireframes interactivos: https://claude.ai/code/artifact/7fbf646c-099e-4701-97aa-cdd081c5ed16

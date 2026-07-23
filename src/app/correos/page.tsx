@@ -35,7 +35,7 @@ export default function CorreosPage() {
           <div key={e.asunto} className="flex w-full max-w-[372px] flex-col gap-2.5">
             <div className="flex flex-col gap-1 rounded-[10px] border border-slate-200 bg-white px-3.5 py-3 text-[11.5px] text-slate-600">
               <div>
-                <b className="font-semibold text-slate-400">De:</b> Vallas by Kory
+                <b className="font-semibold text-slate-400">De:</b> DOOH by Kory
                 &lt;hola@vallas.kory.co&gt;
               </div>
               <div>
@@ -87,11 +87,11 @@ export default function CorreosPage() {
                 <p className="m-0 text-xs text-slate-700">
                   Un abrazo,
                   <br />
-                  <b>El equipo de Vallas by Kory ✨</b>
+                  <b>El equipo de DOOH by Kory ✨</b>
                 </p>
               </div>
               <div className="border-t border-slate-100 bg-slate-50 px-[22px] py-3.5 text-[10px] leading-[1.6] text-slate-400">
-                Vallas by Kory · Bogotá, Colombia
+                DOOH by Kory · Bogotá, Colombia
                 <br />
                 Recibes este correo por tu cuenta en vallas.kory.co ·{" "}
                 <span className="text-kory">Preferencias</span>

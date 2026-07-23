@@ -58,12 +58,12 @@ export function Navbar() {
         <Link
           href={esDueno ? "/panel" : "/"}
           className="flex cursor-pointer items-center gap-2.5"
-          aria-label="Vallas by Kory — inicio"
+          aria-label="DOOH by Kory — inicio"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/kory-mark.svg" alt="" className="h-[27px] w-[26px]" />
           <span className="flex flex-col leading-none">
-            <span className="text-base font-extrabold tracking-[-0.02em] text-ink">Vallas</span>
+            <span className="text-base font-extrabold tracking-[-0.02em] text-ink">DOOH</span>
             <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-kory">
               by Kory
             </span>

@@ -1,4 +1,4 @@
-# Data mock — Vallas by Kory
+# Data mock — DOOH by Kory
 
 **Toda la data de demostración del frontend vive aquí.** El resto de la app
 solo importa desde `@/data` (o `@/data/<módulo>`), nunca define contenido

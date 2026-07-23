@@ -1,5 +1,5 @@
 // ============================================================
-// DATA MOCK CENTRALIZADA — Vallas by Kory
+// DATA MOCK CENTRALIZADA — DOOH by Kory
 //
 // Todo el contenido de demostración del frontend vive en esta
 // carpeta. Cuando se conecte el backend (Firebase), basta con

@@ -13,7 +13,7 @@ export function Footer() {
         <div className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/blanco.svg" alt="Kory" className="h-[22px]" />
-          <span className="text-xs text-[#6B7280]">Vallas by Kory · © 2026</span>
+          <span className="text-xs text-[#6B7280]">DOOH by Kory · © 2026</span>
         </div>
         <div className="flex gap-6 text-[12.5px]">
           <button onClick={() => openModal("como")} className="cursor-pointer text-[#9CA3AF] hover:text-white">

@@ -38,7 +38,7 @@ export default function MisCampanasPage() {
         </Link>
       </div>
       <p className="mt-1 mb-6 text-[13.5px] text-slate-500">
-        Todo lo que has pautado con Vallas by Kory, del pago al certificado.
+        Todo lo que has pautado con DOOH by Kory, del pago al certificado.
       </p>
 
       <div className="flex flex-col gap-3">

@@ -1,4 +1,4 @@
-# Vallas by Kory — Análisis de gaps y evaluación heurística UX
+# DOOH by Kory — Análisis de gaps y evaluación heurística UX
 
 Fecha: 2026-07-22 · Base: demo Next.js (8 pantallas) + diseño original `Vallas by Kory.dc.html`
 

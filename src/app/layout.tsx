@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vallas by Kory — Renta vallas digitales en minutos",
+  title: "DOOH by Kory — Renta vallas digitales en minutos",
   description:
     "Busca, compara y reserva pantallas LED por campaña. Tu anuncio al aire en 24 horas, sin intermediarios.",
   icons: { icon: "/assets/kory-mark.svg" },
