@@ -6,6 +6,7 @@ import type { Valla } from "@/data/types";
 import { fmt, fmtM } from "@/lib/format";
 import { MedicionBadge } from "@/components/medicion-badge";
 import { getNivelPrecio, labelNivel, type Ajuste } from "@/lib/ajuste";
+import { analizar, etiquetaDisponibilidad } from "@/lib/disponibilidad";
 
 export function VallaCard({
   valla,
@@ -23,9 +24,10 @@ export function VallaCard({
   universo?: Valla[];
 }) {
   const router = useRouter();
-  const { fav, toggleFav, set } = useApp();
+  const { fav, toggleFav, set, inicioDia, dias } = useApp();
   const esFav = !!fav[valla.id];
   const nivel = universo ? getNivelPrecio(valla, universo) : null;
+  const disp = analizar(valla, inicioDia, dias);
 
   const ajusteCls =
     ajuste?.estado === "cabe"
@@ -99,6 +101,18 @@ export function VallaCard({
             <MedicionBadge valla={valla} compact />
           </span>
           {vistaInfo && <span className="truncate text-[10.5px] text-slate-500">{vistaInfo}</span>}
+          <span
+            className={`inline-flex w-fit items-center gap-1 rounded-full px-1.5 py-[1px] text-[9.5px] font-bold ${
+              disp.cobertura === "total"
+                ? "bg-[#ECFDF5] text-[#16A34A]"
+                : disp.cobertura === "parcial"
+                  ? "bg-[#FFF7ED] text-[#D97706]"
+                  : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            {disp.cobertura === "total" ? "✓ " : disp.cobertura === "parcial" ? "◑ " : "○ "}
+            {etiquetaDisponibilidad(disp)}
+          </span>
           <span className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-[13.5px] text-ink">
             <b className="font-mono font-bold">{fmtM(valla.precio)}</b>
             <span className="text-[10.5px] text-slate-500">COP /día</span>

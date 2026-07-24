@@ -24,6 +24,7 @@ export const vallas: Valla[] = [
     alcance: 450,
     lng: -74.0538,
     lat: 4.6862,
+    ocupados: [15, 16, 17],
   },
   {
     id: 2,
@@ -89,6 +90,7 @@ export const vallas: Valla[] = [
     alcance: 300,
     lng: -74.0532,
     lat: 4.6668,
+    ocupados: [12, 13, 14, 26, 27],
   },
   {
     id: 5,
@@ -110,6 +112,7 @@ export const vallas: Valla[] = [
     alcance: 320,
     lng: -75.5906,
     lat: 6.257,
+    ocupados: [22, 23, 24, 25],
   },
   {
     id: 6,
@@ -133,6 +136,7 @@ export const vallas: Valla[] = [
     alcance: 520,
     lng: -74.0785,
     lat: 4.6318,
+    ocupados: [18, 19, 20, 21, 22],
   },
   {
     id: 7,
@@ -176,6 +180,7 @@ export const vallas: Valla[] = [
     alcance: 180,
     lng: -74.1275,
     lat: 4.5807,
+    ocupados: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
   },
   {
     id: 9,
@@ -197,6 +202,7 @@ export const vallas: Valla[] = [
     alcance: 60,
     lng: -74.0554,
     lat: 4.6725,
+    ocupados: [16],
   },
   {
     id: 10,
@@ -241,6 +247,7 @@ export const vallas: Valla[] = [
     alcance: 70,
     lng: -74.0521,
     lat: 4.666,
+    ocupados: [13, 14, 20, 21],
   },
   {
     id: 12,
@@ -285,6 +292,7 @@ export const vallas: Valla[] = [
     alcance: 80,
     lng: -74.1069,
     lat: 4.648,
+    ocupados: [24, 25],
   },
   {
     id: 14,
@@ -329,6 +337,7 @@ export const vallas: Valla[] = [
     alcance: 90,
     lng: -75.5779,
     lat: 6.2126,
+    ocupados: [19, 20],
   },
   {
     id: 16,
@@ -372,6 +381,7 @@ export const vallas: Valla[] = [
     alcance: 400,
     lng: -75.5854,
     lat: 6.2405,
+    ocupados: [15, 16, 17, 18],
   },
   {
     id: 18,

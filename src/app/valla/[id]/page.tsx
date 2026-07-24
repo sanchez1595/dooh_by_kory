@@ -6,7 +6,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import {
   calendarioOffset,
-  diasOcupados,
   diasSemana,
   duraciones,
   frecuencias,
@@ -17,8 +16,9 @@ import {
 import { useTodasLasVallas, useValla } from "@/hooks/use-vallas";
 import { VallaCard } from "@/components/valla-card";
 import { MedicionBadge, medicionNota } from "@/components/medicion-badge";
-import { fmtDia } from "@/lib/format";
+import { fmt, fmtDia } from "@/lib/format";
 import { getQuote } from "@/lib/pricing";
+import { analizar, fmtTramo, sugerirRelevo } from "@/lib/disponibilidad";
 
 export default function DetallePage() {
   const params = useParams<{ id: string }>();
@@ -42,16 +42,15 @@ export default function DetallePage() {
   const finDia = app.inicioDia + app.dias - 1;
   const finVisible = Math.min(finDia, 31);
 
+  // Disponibilidad real de ESTA pantalla en la ventana pedida.
+  const ocup = new Set(sel.ocupados ?? []);
+  const disp = analizar(sel, app.inicioDia, app.dias);
+  const relevo = sugerirRelevo(sel, app.inicioDia, app.dias, todas);
+
   const pickDia = (d: number) => {
-    if (diasOcupados.has(d)) {
+    if (ocup.has(d)) {
       app.showToast("Ese día está ocupado — elige otro día de inicio");
       return;
-    }
-    for (let i = d; i < d + app.dias; i++) {
-      if (diasOcupados.has(i)) {
-        app.showToast("Tu campaña se cruzaría con días ocupados — elige otro inicio");
-        return;
-      }
     }
     app.set({ inicioDia: d });
     app.showToast(`Campaña movida: inicia el ${fmtDia(d)}`);
@@ -230,16 +229,19 @@ export default function DetallePage() {
                   <div key={`off-${i}`} className="h-10 w-10" />
                 ))}
                 {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => {
-                  const selDay = d >= app.inicioDia && d <= finVisible;
-                  const occ = diasOcupados.has(d);
+                  const enVentana = d >= app.inicioDia && d <= finVisible;
+                  const occ = ocup.has(d);
+                  // Día de tu ventana pero vendido: se resalta como conflicto.
+                  const conflicto = enVentana && occ;
+                  const activo = enVentana && !occ;
                   return (
                     <button
                       key={d}
                       onClick={() => pickDia(d)}
                       style={{
-                        background: selDay ? "#724CF5" : occ ? "#F1F5F9" : "#fff",
-                        color: selDay ? "#fff" : occ ? "#CBD5E1" : "#0F172A",
-                        borderColor: selDay ? "#724CF5" : occ ? "#F1F5F9" : "#E2E8F0",
+                        background: activo ? "#724CF5" : conflicto ? "#FEF2F2" : occ ? "#F1F5F9" : "#fff",
+                        color: activo ? "#fff" : conflicto ? "#DC2626" : occ ? "#CBD5E1" : "#0F172A",
+                        borderColor: activo ? "#724CF5" : conflicto ? "#FCA5A5" : occ ? "#F1F5F9" : "#E2E8F0",
                         textDecoration: occ ? "line-through" : "none",
                         cursor: occ ? "not-allowed" : "pointer",
                       }}
@@ -250,20 +252,160 @@ export default function DetallePage() {
                   );
                 })}
               </div>
-              <div className="mt-3.5 flex gap-[18px] text-[11.5px] text-slate-500">
+              <div className="mt-3.5 flex flex-wrap gap-[18px] text-[11.5px] text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded bg-kory" />
-                  Tu campaña
+                  Tus días
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="h-3 w-3 rounded border border-slate-200 bg-white" />
-                  Libre
+                  <span className="h-3 w-3 rounded border border-[#FCA5A5] bg-[#FEF2F2]" />
+                  Vendido en tus fechas
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded bg-slate-100" />
                   Ocupado
                 </span>
               </div>
+
+              {/* Compra inteligente: solo cuando la ventana tiene huecos */}
+              {disp.cobertura === "parcial" && (
+                <div className="mt-5 overflow-hidden rounded-[14px] border border-lavender-border">
+                  <div className="flex items-center gap-2 bg-[linear-gradient(135deg,#F8F6FF,#fff)] px-4 py-3">
+                    <span className="inline-flex items-center gap-[5px] rounded-full bg-kory-tint px-2.5 py-[3px] text-[11px] font-bold text-kory">
+                      ✨ Kory IA
+                    </span>
+                    <span className="text-[13px] font-semibold text-slate-700">
+                      Esta pantalla está vendida{" "}
+                      {disp.huecos.map((h, i) => (
+                        <span key={i}>
+                          {i > 0 && ", "}
+                          <b className="text-ink">{fmtTramo(h)}</b>
+                        </span>
+                      ))}
+                      . Tienes dos formas de no perder tus fechas:
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-px bg-slate-100">
+                    {/* Opción 1: intercalada (misma pantalla, días libres) */}
+                    {(() => {
+                      const q = getQuote(sel, disp.libres.length, app.spots, app.inicioDia);
+                      return (
+                        <div className="flex flex-col gap-2.5 bg-white px-4 py-3.5 sm:flex-row sm:items-center">
+                          <div className="flex-1">
+                            <div className="text-[13.5px] font-bold text-ink">
+                              Reserva solo los {disp.libres.length} días libres
+                            </div>
+                            <p className="mt-0.5 mb-0 text-[12px] leading-[1.5] text-slate-500">
+                              Tu anuncio sale al aire los días disponibles y se pausa solo{" "}
+                              {disp.huecos.map((h) => fmtTramo(h)).join(" y ")}. Pagas únicamente lo
+                              que emites.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+                            <span className="font-mono text-[15px] font-bold text-ink">
+                              {fmt(q.total)}
+                            </span>
+                            <button
+                              onClick={() =>
+                                app.showToast(
+                                  `Campaña intercalada: ${disp.libres.length} días en ${sel.nombre}`,
+                                )
+                              }
+                              className="h-9 shrink-0 cursor-pointer rounded-[10px] bg-kory px-4 text-[12.5px] font-bold text-white hover:bg-kory-hover"
+                            >
+                              Reservar {disp.libres.length} días
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Opción 2: relevo continuo (otra pantalla cubre los huecos) */}
+                    {relevo && (() => {
+                      const qBase = getQuote(sel, disp.libres.length, app.spots, app.inicioDia);
+                      const qRel = getQuote(relevo.valla, relevo.cubre.length, app.spots, app.inicioDia);
+                      const total = qBase.total + qRel.total;
+                      return (
+                        <div className="bg-white px-4 py-3.5">
+                          <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-1.5 text-[13.5px] font-bold text-ink">
+                                Cobertura continua con relevo
+                                <span className="rounded-full bg-kory-tint px-2 py-[1px] text-[9.5px] font-bold text-kory">
+                                  recomendado
+                                </span>
+                              </div>
+                              <p className="mt-0.5 mb-0 text-[12px] leading-[1.5] text-slate-500">
+                                Sin huecos: <b className="text-ink">{sel.nombre}</b> los días libres y{" "}
+                                <b className="text-ink">{relevo.valla.nombre}</b> cubre{" "}
+                                {relevo.cubre.length === 1
+                                  ? fmtDia(relevo.cubre[0])
+                                  : `${relevo.cubre.length} días`}
+                                . Un solo pago, tus 14 días completos.
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+                              <span className="font-mono text-[15px] font-bold text-ink">
+                                {fmt(total)}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  app.showToast(
+                                    `Relevo armado: ${sel.nombre} + ${relevo.valla.nombre} — cobertura continua`,
+                                  )
+                                }
+                                className="h-9 shrink-0 cursor-pointer rounded-[10px] bg-kory px-4 text-[12.5px] font-bold text-white hover:bg-kory-hover"
+                              >
+                                Armar relevo
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Línea de tiempo: quién emite cada día */}
+                          <div className="mt-3 flex overflow-hidden rounded-lg">
+                            {disp.ventana.map((d) => {
+                              const esHueco = disp.ocupados.includes(d);
+                              const loCubre = esHueco && relevo.cubre.includes(d);
+                              return (
+                                <div
+                                  key={d}
+                                  title={`${fmtDia(d)} · ${loCubre ? relevo.valla.nombre : esHueco ? "sin cubrir" : sel.nombre}`}
+                                  style={{
+                                    background: loCubre
+                                      ? "#9B7BF7"
+                                      : esHueco
+                                        ? "#E2E8F0"
+                                        : "#724CF5",
+                                  }}
+                                  className="h-6 flex-1 border-r border-white/40 last:border-r-0"
+                                />
+                              );
+                            })}
+                          </div>
+                          <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[10.5px] text-slate-500">
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="h-2.5 w-2.5 rounded-sm bg-kory" />
+                              {sel.nombre}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="h-2.5 w-2.5 rounded-sm bg-kory-light" />
+                              {relevo.valla.nombre}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {disp.cobertura === "nula" && (
+                <div className="mt-5 rounded-[14px] border border-lavender-border bg-kory-pale px-4 py-3.5 text-[13px] leading-[1.55] text-slate-700">
+                  Esta pantalla está vendida en todas tus fechas. Prueba con otro rango, o mira las{" "}
+                  <b>pantallas similares</b> más abajo — varias están libres esos días.
+                </div>
+              )}
             </div>
 
             {/* Reseñas */}

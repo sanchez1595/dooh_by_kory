@@ -9,10 +9,12 @@ import { beneficioTipo, ciudades, gruposTipo, SIN_LIMITE } from "@/data";
 import type { TipoValla, Valla } from "@/data/types";
 import { fmt, fmtDia, fmtM, fmtMillones } from "@/lib/format";
 import { fmtCorto, getAjuste, rangoTipico } from "@/lib/ajuste";
+import { analizar, etiquetaDisponibilidad } from "@/lib/disponibilidad";
 import { parseBusqueda, sinAcentos } from "@/lib/busqueda";
 import { getQuote } from "@/lib/pricing";
 import { VallaCard } from "@/components/valla-card";
 import { RealMap } from "@/components/real-map";
+import { RangePicker } from "@/components/range-picker";
 
 // W17 · Constructor de campaña. El presupuesto deja de ser un filtro que borra
 // y se vuelve el eje que reencuadra el catálogo: cada pantalla responde en días
@@ -101,6 +103,8 @@ export default function MapaPage() {
   const [mapSel, setMapSel] = useState<number | null>(null);
   const [mapHover, setMapHover] = useState<number | null>(null);
   const [q, setQ] = useState("");
+  const [fechasAbierto, setFechasAbierto] = useState(false);
+  const [fechaPend, setFechaPend] = useState<number | null>(null);
 
   const cambiarCiudad = (c: CiudadMapa) => {
     setCiudadMapa(c);
@@ -203,7 +207,15 @@ export default function MapaPage() {
     vallas.length > 0 ? [] : (base.length > 0 ? base : todas).slice(0, 4);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col overflow-hidden">
+    <div
+      onClick={(e) => {
+        if (fechasAbierto && !(e.target as HTMLElement).closest("[data-fechas]")) {
+          setFechasAbierto(false);
+          setFechaPend(null);
+        }
+      }}
+      className="flex h-[calc(100vh-64px)] flex-col overflow-hidden"
+    >
       {/* Búsqueda IA + chips + toggle Lista/Mapa */}
       <div className="border-b border-slate-200 bg-white px-5 py-2.5">
         <div className="flex flex-wrap items-center gap-2">
@@ -313,9 +325,55 @@ export default function MapaPage() {
           <div className="mt-4 mb-1 font-mono text-[9.5px] font-bold tracking-[0.08em] text-slate-500 uppercase">
             Fechas
           </div>
-          <div className="rounded-[9px] border border-slate-200 px-3 py-2 text-[12.5px] font-semibold text-ink">
-            {fmtDia(app.inicioDia)} – {fmtDia(finDia)}
-            <span className="block text-[10.5px] font-normal text-slate-400">{app.dias} días</span>
+          <div className="relative" data-fechas>
+            <button
+              onClick={() => setFechasAbierto((a) => !a)}
+              aria-expanded={fechasAbierto}
+              className={`flex w-full cursor-pointer items-center justify-between rounded-[9px] border px-3 py-2 text-left transition-colors ${
+                fechasAbierto ? "border-kory" : "border-slate-200 hover:border-lavender-strong"
+              }`}
+            >
+              <span>
+                <span className="block text-[12.5px] font-semibold text-ink">
+                  {fmtDia(app.inicioDia)} – {fmtDia(finDia)}
+                </span>
+                <span className="block text-[10.5px] font-normal text-slate-400">
+                  {app.dias} días
+                </span>
+              </span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className={`h-3.5 w-3.5 shrink-0 text-slate-400 transition-transform ${fechasAbierto ? "rotate-180" : ""}`}
+                strokeWidth={2.4}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            {fechasAbierto && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-[calc(100%+6px)] left-0 z-30 w-[268px] rounded-xl border border-slate-200 bg-white p-1.5 shadow-dropdown"
+              >
+                <RangePicker
+                  inicioDia={app.inicioDia}
+                  finDia={finDia}
+                  pendiente={fechaPend}
+                  onPick={(g) => {
+                    if (fechaPend === null) {
+                      setFechaPend(g);
+                    } else if (g >= fechaPend) {
+                      app.set({ inicioDia: fechaPend, dias: g - fechaPend + 1 });
+                      setFechaPend(null);
+                      setFechasAbierto(false);
+                    } else {
+                      setFechaPend(g);
+                    }
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-4 mb-1 font-mono text-[9.5px] font-bold tracking-[0.08em] text-slate-500 uppercase">
@@ -593,6 +651,23 @@ export default function MapaPage() {
                 <span className="text-[11px] text-slate-600">
                   {vistaLabel(popupV)} · radio ≈ {popupV.alcance ?? 300} m
                 </span>
+                {(() => {
+                  const d = analizar(popupV, app.inicioDia, app.dias);
+                  return (
+                    <span
+                      className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-[2px] text-[10px] font-bold ${
+                        d.cobertura === "total"
+                          ? "bg-[#ECFDF5] text-[#16A34A]"
+                          : d.cobertura === "parcial"
+                            ? "bg-[#FFF7ED] text-[#D97706]"
+                            : "bg-slate-100 text-slate-500"
+                      }`}
+                    >
+                      {d.cobertura === "total" ? "✓ " : d.cobertura === "parcial" ? "◑ " : "○ "}
+                      {etiquetaDisponibilidad(d)}
+                    </span>
+                  );
+                })()}
                 <div className="mt-1.5 flex items-center justify-between">
                   <span className="font-mono text-[13.5px] font-bold">
                     {fmt(popupV.precio)}{" "}

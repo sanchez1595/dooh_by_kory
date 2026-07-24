@@ -41,6 +41,8 @@ export interface Valla {
   /** Coordenadas reales (WGS84) para el mapa MapLibre */
   lng?: number;
   lat?: number;
+  /** Días ya vendidos (día global: 1–31 ago, 32–61 sep). Ausente = libre. */
+  ocupados?: number[];
 }
 
 export interface Resena {
