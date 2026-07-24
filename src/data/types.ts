@@ -19,11 +19,17 @@ export interface Valla {
   rating: string;
   reviews: number;
   grad: string;
-  /** Posición del pin en el mapa ilustrativo (porcentajes) */
+  /** Posición del pin en el mapa ilustrativo de SU ciudad (porcentajes) */
   x: string;
   y: string;
   /** "vision" = cámara Kory Vision instalada; ausente = impresiones estimadas con datos de movilidad */
   medicion?: "vision";
+  /** Dirección de vista en grados (0 = norte, sentido horario) */
+  vista?: number;
+  /** Doble cara: la pantalla también se ve hacia la dirección opuesta */
+  dobleCara?: boolean;
+  /** Radio de visibilidad aproximado en metros */
+  alcance?: number;
 }
 
 export interface Resena {
