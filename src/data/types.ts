@@ -3,7 +3,15 @@
 
 export type Ciudad = "Todas" | "Bogotá" | "Medellín";
 
-export type TipoValla = "LED exterior" | "Torre digital" | "LED interior";
+export type TipoValla =
+  | "Valla LED"
+  | "Torre digital"
+  | "Paradero digital"
+  | "Centro comercial"
+  | "Aeropuerto"
+  | "Estación";
+
+export type Entorno = "exterior" | "interior";
 
 export interface Valla {
   id: number;

@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import { useVallasFiltradas } from "@/hooks/use-vallas-filtradas";
-import { categorias, ciudades, presupuestos } from "@/data";
+import { categorias, ciudades, entornoDe, presupuestos } from "@/data";
 import type { Valla } from "@/data/types";
 import { fmt, fmtDia, fmtM, fmtMillones } from "@/lib/format";
+import { parseBusqueda, sinAcentos } from "@/lib/busqueda";
 import { MedicionBadge } from "@/components/medicion-badge";
 import { VallaCard } from "@/components/valla-card";
 import { RealMap } from "@/components/real-map";
@@ -33,7 +34,7 @@ function vistaLabel(v: Valla): string {
 export default function MapaPage() {
   const router = useRouter();
   const app = useApp();
-  const vallas = useVallasFiltradas();
+  const base = useVallasFiltradas();
   const [vista, setVista] = useState<"lista" | "mapa">("lista");
   const [ciudadMapa, setCiudadMapa] = useState<CiudadMapa>(
     app.ciudad === "Medellín" ? "Medellín" : "Bogotá",
@@ -41,6 +42,22 @@ export default function MapaPage() {
   const [conAlcance, setConAlcance] = useState(true);
   const [mapSel, setMapSel] = useState<number | null>(null);
   const [mapHover, setMapHover] = useState<number | null>(null);
+  const [q, setQ] = useState("");
+
+  // Búsqueda inteligente: intención parseada + términos libres sobre
+  // los filtros ya activos. Los pins del mapa reflejan el resultado.
+  const busq = parseBusqueda(q);
+  const vallas = base.filter(
+    (v) =>
+      (!busq.ciudad || v.ciudad === busq.ciudad) &&
+      (!busq.tipo || v.tipo === busq.tipo) &&
+      (!busq.entorno || entornoDe(v.tipo) === busq.entorno) &&
+      (!busq.vision || v.medicion === "vision") &&
+      (!busq.maxPrecio || v.precio <= busq.maxPrecio) &&
+      busq.terminos.every((term) =>
+        sinAcentos(`${v.nombre} ${v.ubicacion}`.toLowerCase()).includes(term),
+      ),
+  );
 
   const abrir = (id: number) => {
     app.set({ vallaId: id });
@@ -109,6 +126,21 @@ export default function MapaPage() {
           </button>
         ))}
         <span className="h-5 w-px shrink-0 bg-slate-200" />
+        {(["exterior", "interior"] as const).map((e) => (
+          <button
+            key={e}
+            onClick={() => app.set({ entorno: app.entorno === e ? "Todos" : e })}
+            aria-pressed={app.entorno === e}
+            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition-colors ${
+              app.entorno === e
+                ? "border-ink bg-ink text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
+            }`}
+          >
+            {e}
+          </button>
+        ))}
+        <span className="h-5 w-px shrink-0 bg-slate-200" />
         <button
           onClick={() => app.set({ soloVision: !app.soloVision })}
           aria-pressed={app.soloVision}
@@ -141,6 +173,45 @@ export default function MapaPage() {
         <div
           className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-6 pt-5 pb-[90px] md:block`}
         >
+          {/* Búsqueda inteligente Kory IA */}
+          <div className="mb-3 flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-4 shadow-card transition-colors focus-within:border-kory">
+            <span className="shrink-0 text-[13px]">✨</span>
+            <input
+              value={q}
+              onChange={(e) => {
+                const texto = e.target.value;
+                setQ(texto);
+                const nb = parseBusqueda(texto);
+                if (nb.ciudad && nb.ciudad !== ciudadMapa) cambiarCiudad(nb.ciudad);
+              }}
+              placeholder='Busca con Kory IA: "interiores en Medellín bajo $1,5M"'
+              aria-label="Búsqueda inteligente"
+              className="h-11 w-full min-w-0 bg-transparent text-[13.5px] text-ink outline-none placeholder:text-slate-400"
+            />
+            {q && (
+              <button
+                onClick={() => setQ("")}
+                aria-label="Limpiar búsqueda"
+                className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-xs text-slate-500 hover:bg-slate-100"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {q && busq.etiquetas.length > 0 && (
+            <div className="mb-4 flex flex-wrap items-center gap-1.5 text-[11.5px]">
+              <span className="font-bold text-kory">Entendí:</span>
+              {busq.etiquetas.map((e) => (
+                <span
+                  key={e}
+                  className="rounded-full bg-kory-tint px-2.5 py-[3px] font-semibold text-kory"
+                >
+                  {e}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Resumen del inventario filtrado */}
           <div className="mb-4 grid grid-cols-3 gap-2.5">
             {[

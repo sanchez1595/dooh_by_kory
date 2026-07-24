@@ -14,7 +14,14 @@ const pasos = [
   { n: 4, titulo: "Tarifa y revisión", sub: "precio/día · publicar" },
 ];
 
-const tipos: TipoValla[] = ["LED exterior", "Torre digital", "LED interior"];
+const tipos: TipoValla[] = [
+  "Valla LED",
+  "Torre digital",
+  "Paradero digital",
+  "Centro comercial",
+  "Aeropuerto",
+  "Estación",
+];
 
 const fotoLabels = ["Frontal · día", "Entorno", "Vista nocturna", "Tráfico", "Lateral", "Peatonal"];
 
@@ -29,7 +36,7 @@ export default function PublicarPage() {
   const [paso, setPaso] = useState(1);
   const [form, setForm] = useState({
     nombre: "Pantalla LED Calle 26",
-    tipo: "LED exterior" as TipoValla,
+    tipo: "Valla LED" as TipoValla,
     dim: "10×4 m",
     res: "1920×768",
     ciudad: "Bogotá" as "Bogotá" | "Medellín",

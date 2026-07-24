@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
-import type { Ciudad, EstadoCampana, TipoValla, Valla } from "@/data/types";
+import type { Ciudad, Entorno, EstadoCampana, TipoValla, Valla } from "@/data/types";
 import type { Presupuesto } from "@/data/catalogo";
 
 // Estado global de la demo (filtros, reserva, favoritos, toasts, modales).
@@ -24,6 +24,8 @@ interface AppState {
   presupuesto: Presupuesto;
   /** Filtro: solo pantallas con medición Kory Vision */
   soloVision: boolean;
+  /** Filtro indoor/outdoor ("Todos" = ambos) */
+  entorno: "Todos" | Entorno;
   dias: number;
   spots: number;
   inicioDia: number;
@@ -69,6 +71,7 @@ const initialState: AppState = {
   cat: "Todas",
   presupuesto: "Sin límite",
   soloVision: false,
+  entorno: "Todos",
   dias: 14,
   spots: 6,
   inicioDia: 12,
@@ -134,6 +137,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       cat: "Todas",
       presupuesto: "Sin límite",
       soloVision: false,
+      entorno: "Todos",
       dias: 14,
     }));
   }, []);

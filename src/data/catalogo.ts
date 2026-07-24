@@ -1,4 +1,4 @@
-import type { Ciudad, FotoTile, TipoValla, Valla } from "./types";
+import type { Ciudad, Entorno, FotoTile, TipoValla, Valla } from "./types";
 
 // Opciones de búsqueda y configuración de campaña (mock/estático).
 
@@ -6,10 +6,20 @@ export const ciudades: Ciudad[] = ["Todas", "Bogotá", "Medellín"];
 
 export const categorias: Array<TipoValla | "Todas"> = [
   "Todas",
-  "LED exterior",
+  "Valla LED",
   "Torre digital",
-  "LED interior",
+  "Paradero digital",
+  "Centro comercial",
+  "Aeropuerto",
+  "Estación",
 ];
+
+/** Entorno derivado del tipo de pantalla (indoor vs outdoor). */
+export function entornoDe(tipo: TipoValla): Entorno {
+  return tipo === "Centro comercial" || tipo === "Aeropuerto" || tipo === "Estación"
+    ? "interior"
+    : "exterior";
+}
 
 export const presupuestos = ["$20M", "$50M", "$100M", "Sin límite"] as const;
 export type Presupuesto = (typeof presupuestos)[number];
