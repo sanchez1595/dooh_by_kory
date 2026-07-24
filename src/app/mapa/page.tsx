@@ -343,7 +343,7 @@ export default function MapaPage() {
               {fmtDia(app.inicioDia)} – {fmtDia(finDia)} · los precios incluyen el servicio del 8%
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-3.5 2xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3.5">
             {vallas.map((v) => (
               <div
                 key={v.id}
