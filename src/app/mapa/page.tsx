@@ -204,27 +204,10 @@ export default function MapaPage() {
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-col overflow-hidden">
-      {/* Toggle Lista/Mapa — solo móvil */}
-      <div className="flex justify-center border-b border-slate-200 bg-white py-2 md:hidden">
-        <div className="flex overflow-hidden rounded-full border border-slate-200">
-          {(["lista", "mapa"] as const).map((v) => (
-            <button
-              key={v}
-              onClick={() => setVista(v)}
-              className={`cursor-pointer px-5 py-1.5 text-xs font-bold capitalize ${
-                vista === v ? "bg-ink text-white" : "bg-white text-slate-600"
-              }`}
-            >
-              {v}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Búsqueda IA + chips de lo aplicado */}
+      {/* Búsqueda IA + chips + toggle Lista/Mapa */}
       <div className="border-b border-slate-200 bg-white px-5 py-2.5">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex min-w-[260px] flex-1 items-center gap-2.5 rounded-full border border-slate-200 px-4 transition-colors focus-within:border-kory">
+          <div className="flex min-w-[240px] flex-1 items-center gap-2.5 rounded-full border border-slate-200 px-4 transition-colors focus-within:border-kory">
             <span className="shrink-0 text-[13px]">✨</span>
             <input
               value={q}
@@ -251,21 +234,42 @@ export default function MapaPage() {
           {chips.map((c) => (
             <ChipFiltro key={c.label} label={c.label} onQuitar={c.quitar} />
           ))}
-          <button
-            onClick={() => {
-              app.resetFiltros();
-              setQ("");
-            }}
-            disabled={!hayFiltros}
-            className="cursor-pointer text-xs font-semibold text-kory hover:underline disabled:cursor-default disabled:text-slate-300 disabled:no-underline"
-          >
-            Limpiar todo
-          </button>
+          {hayFiltros && (
+            <button
+              onClick={() => {
+                app.resetFiltros();
+                setQ("");
+              }}
+              className="cursor-pointer text-xs font-semibold text-kory hover:underline"
+            >
+              Limpiar todo
+            </button>
+          )}
+          {/* Toggle Lista/Mapa — una sola vista grande a la derecha */}
+          <div className="ml-auto flex shrink-0 overflow-hidden rounded-full border border-slate-200">
+            {(
+              [
+                ["lista", "☰ Lista"],
+                ["mapa", "◗ Mapa"],
+              ] as const
+            ).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => setVista(v)}
+                aria-pressed={vista === v}
+                className={`cursor-pointer px-4 py-1.5 text-xs font-bold transition-colors ${
+                  vista === v ? "bg-ink text-white" : "bg-white text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[236px_minmax(0,1fr)] xl:grid-cols-[236px_minmax(0,1.05fr)_minmax(0,1fr)]">
-        {/* ── Panel: Tu campaña ── */}
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[236px_minmax(0,1fr)]">
+        {/* ── Panel: Tu campaña (siempre visible en desktop) ── */}
         <aside
           className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-4 pt-4 pb-24 md:block`}
         >
@@ -381,10 +385,8 @@ export default function MapaPage() {
           />
         </aside>
 
-        {/* ── Resultados ── */}
-        <div
-          className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-5 pt-4 pb-24 md:block`}
-        >
+        {/* ── Área grande: Lista (multi-columna) O Mapa, según el toggle ── */}
+        <div className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto bg-white px-5 pt-4 pb-24`}>
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <h1 className="m-0 text-[15px] font-extrabold text-ink">
               {vallas.length} de {conteos.total} pantallas
@@ -441,7 +443,7 @@ export default function MapaPage() {
                     Mientras tanto, lo más parecido
                     <span className="h-px flex-1 bg-slate-200" />
                   </div>
-                  <div className="grid grid-cols-2 gap-3.5">
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5">
                     {aproximados.map((v) => (
                       <VallaCard
                         key={v.id}
@@ -457,7 +459,7 @@ export default function MapaPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5">
                 {alcanzan.map(({ v, a }) => (
                   <div
                     key={v.id}
@@ -485,7 +487,7 @@ export default function MapaPage() {
                     {sePasan.length} se pasan de tu presupuesto
                     <span className="h-px flex-1 bg-slate-200" />
                   </div>
-                  <div className="grid grid-cols-2 gap-3.5 opacity-70">
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5 opacity-70">
                     {sePasan.map(({ v, a }) => (
                       <div
                         key={v.id}
@@ -536,8 +538,8 @@ export default function MapaPage() {
           )}
         </div>
 
-        {/* ── Mapa ── */}
-        <div className={`relative ${vista === "mapa" ? "block" : "hidden"} xl:block`}>
+        {/* ── Mapa (ocupa toda el área grande cuando está activo) ── */}
+        <div className={`relative ${vista === "mapa" ? "block" : "hidden"}`}>
           <RealMap
             vallas={vallas}
             ciudad={ciudadMapa}
@@ -546,6 +548,7 @@ export default function MapaPage() {
             selId={mapSel}
             onSelect={setMapSel}
             onHover={setMapHover}
+            activo={vista === "mapa"}
           />
 
           <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">

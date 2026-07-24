@@ -27,6 +27,8 @@ interface Props {
   selId: number | null;
   onSelect: (id: number | null) => void;
   onHover: (id: number | null) => void;
+  /** Si el mapa está visible (toggle Lista/Mapa): re-encuadra al activarse. */
+  activo?: boolean;
 }
 
 /** Punto a `radioM` metros del origen con rumbo `rumbo` (0 = norte, horario). */
@@ -87,7 +89,16 @@ const activoExpr = (hi: number, lo: number): maplibregl.ExpressionSpecification 
   lo,
 ];
 
-export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, onHover }: Props) {
+export function RealMap({
+  vallas,
+  ciudad,
+  conAlcance,
+  hoverId,
+  selId,
+  onSelect,
+  onHover,
+  activo = true,
+}: Props) {
   const contRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<Map<number, { marker: maplibregl.Marker; el: HTMLButtonElement }>>(
@@ -151,7 +162,15 @@ export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, 
       setListo(true);
     });
     mapRef.current = map;
+
+    // El contenedor puede montarse oculto (toggle Lista/Mapa): MapLibre no se
+    // entera de que recupera tamaño y renderiza en blanco. Un ResizeObserver lo
+    // reajusta en cuanto vuelve a tener dimensiones.
+    const ro = new ResizeObserver(() => map.resize());
+    ro.observe(contRef.current);
+
     return () => {
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
     };
@@ -200,7 +219,10 @@ export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, 
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !listo) return;
+    if (!map || !listo || !activo) return;
+    // El contenedor acaba de recibir tamaño (o cambió el conjunto): sincroniza
+    // el viewport antes de encuadrar para no calcular el zoom con tamaño viejo.
+    map.resize();
     const enCiudad = vallas.filter(
       (v) => v.ciudad === ciudad && v.lng !== undefined && v.lat !== undefined,
     );
@@ -213,9 +235,9 @@ export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, 
     } else {
       map.flyTo({ ...CENTROS[ciudad], duration: 900 });
     }
-    // Depende del conjunto de resultados de la ciudad, no del array completo.
+    // Depende del conjunto de resultados de la ciudad y de la visibilidad.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ciudad, listo, claveResultados]);
+  }, [ciudad, listo, claveResultados, activo]);
 
   // Estado hover/selección: intensifica alcance y pin.
   useEffect(() => {
