@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import type { Ciudad, Entorno, EstadoCampana, TipoValla, Valla } from "@/data/types";
-import type { Presupuesto } from "@/data/catalogo";
+import { SIN_LIMITE } from "@/data/catalogo";
 
 // Estado global de la demo (filtros, reserva, favoritos, toasts, modales).
 // Es estado de UI puro: sobrevive a la navegación entre páginas pero no se
@@ -21,7 +21,8 @@ interface AppState {
   rol: Rol;
   ciudad: Ciudad;
   cat: TipoValla | "Todas";
-  presupuesto: Presupuesto;
+  /** Presupuesto TOTAL de campaña en COP; SIN_LIMITE (Infinity) = sin tope. */
+  presupuesto: number;
   /** Filtro: solo pantallas con medición Kory Vision */
   soloVision: boolean;
   /** Filtro indoor/outdoor ("Todos" = ambos) */
@@ -69,7 +70,7 @@ const initialState: AppState = {
   pantallaOverrides: {},
   ciudad: "Todas",
   cat: "Todas",
-  presupuesto: "Sin límite",
+  presupuesto: SIN_LIMITE,
   soloVision: false,
   entorno: "Todos",
   dias: 14,
@@ -130,15 +131,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState((s) => ({ ...s, modal: null }));
   }, []);
 
+  // Restablece solo los FILTROS. Las fechas de campaña (inicioDia/dias) son
+  // configuración del usuario, no un filtro: pisarlas aquí era un efecto
+  // silencioso que borraba su selección.
   const resetFiltros = useCallback(() => {
     setState((s) => ({
       ...s,
       ciudad: "Todas",
       cat: "Todas",
-      presupuesto: "Sin límite",
+      presupuesto: SIN_LIMITE,
       soloVision: false,
       entorno: "Todos",
-      dias: 14,
     }));
   }, []);
 

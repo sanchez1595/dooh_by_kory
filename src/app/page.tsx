@@ -177,9 +177,9 @@ export default function InicioPage() {
                   <path d="m21 21-4.3-4.3" />
                 </svg>
               </span>
-              <div className="text-[15px] font-bold">Ninguna pantalla cabe en ese presupuesto</div>
+              <div className="text-[15px] font-bold">Ninguna pantalla coincide con esos filtros</div>
               <p className="m-0 text-[13px] text-slate-500">
-                Prueba con más presupuesto, menos días de campaña o todas las ciudades.
+                Prueba con otra ciudad o con todos los tipos de pantalla.
               </p>
               <button
                 onClick={app.resetFiltros}

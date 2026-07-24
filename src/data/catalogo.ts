@@ -21,15 +21,42 @@ export function entornoDe(tipo: TipoValla): Entorno {
     : "exterior";
 }
 
-export const presupuestos = ["$20M", "$50M", "$100M", "Sin límite"] as const;
-export type Presupuesto = (typeof presupuestos)[number];
+// Un solo control de "tipo de sitio", agrupado por entorno. Tipo y entorno no
+// son dimensiones ortogonales (el entorno se deriva del tipo), así que ofrecer
+// ambas como filtros producía 6 de 12 cruces vacíos por construcción.
+export const gruposTipo: Array<{ entorno: Entorno; label: string; tipos: TipoValla[] }> = [
+  {
+    entorno: "exterior",
+    label: "Al aire libre",
+    tipos: ["Valla LED", "Torre digital", "Paradero digital"],
+  },
+  {
+    entorno: "interior",
+    label: "Bajo techo",
+    tipos: ["Centro comercial", "Aeropuerto", "Estación"],
+  },
+];
 
-export const presupuestoMax: Record<Presupuesto, number> = {
-  "$20M": 20e6,
-  "$50M": 50e6,
-  "$100M": 100e6,
-  "Sin límite": Infinity,
+/** Qué gana el anunciante con cada tipo — traduce taxonomía a decisión. */
+export const beneficioTipo: Record<TipoValla, string> = {
+  "Valla LED": "tráfico vehicular a gran escala",
+  "Torre digital": "visible desde varias cuadras",
+  "Paradero digital": "gente esperando el bus, la ven ~40 segundos",
+  "Centro comercial": "público de compras, alta permanencia",
+  "Aeropuerto": "viajeros y ejecutivos, alto poder adquisitivo",
+  "Estación": "flujo masivo diario de pasajeros",
 };
+
+/** Sin límite se representa con Infinity. */
+export const SIN_LIMITE = Infinity;
+
+/** Presets del buscador del inicio (presupuesto total de campaña, COP). */
+export const presupuestos: Array<{ valor: number; label: string }> = [
+  { valor: 20e6, label: "Hasta $20M" },
+  { valor: 50e6, label: "Hasta $50M" },
+  { valor: 100e6, label: "Hasta $100M" },
+  { valor: SIN_LIMITE, label: "Sin límite" },
+];
 
 export const duraciones = [7, 14, 30] as const;
 

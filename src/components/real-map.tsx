@@ -190,7 +190,14 @@ export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, 
     }
   }, [vallas, listo]);
 
-  // Vuelo al cambiar de ciudad.
+  // Reencuadre: sigue a los RESULTADOS, no solo al cambio de ciudad. Así
+  // filtrar nunca deja la vista sobre un área sin pines (que se leería como
+  // "no hay inventario"). La clave evita volar de nuevo si el conjunto no cambió.
+  const claveResultados = vallas
+    .filter((v) => v.ciudad === ciudad)
+    .map((v) => v.id)
+    .join(",");
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !listo) return;
@@ -201,12 +208,14 @@ export function RealMap({ vallas, ciudad, conAlcance, hoverId, selId, onSelect, 
       const b = new maplibregl.LngLatBounds();
       for (const v of enCiudad) b.extend([v.lng!, v.lat!]);
       map.fitBounds(b, { padding: 90, maxZoom: 14, duration: 900 });
+    } else if (enCiudad.length === 1) {
+      map.flyTo({ center: [enCiudad[0].lng!, enCiudad[0].lat!], zoom: 13.5, duration: 900 });
     } else {
       map.flyTo({ ...CENTROS[ciudad], duration: 900 });
     }
-    // Volar solo cuando cambia la ciudad, no con cada cambio de filtros.
+    // Depende del conjunto de resultados de la ciudad, no del array completo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ciudad, listo]);
+  }, [ciudad, listo, claveResultados]);
 
   // Estado hover/selección: intensifica alcance y pin.
   useEffect(() => {

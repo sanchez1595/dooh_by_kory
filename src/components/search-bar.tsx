@@ -254,17 +254,17 @@ export function SearchBar({ dropdown, setDropdown }: { dropdown: Dropdown; setDr
           Presupuesto <Chevron />
         </div>
         <div className="mt-0.5 text-sm font-semibold text-ink">
-          {app.presupuesto === "Sin límite" ? "Sin límite" : `Hasta ${app.presupuesto}`}
+          {presupuestos.find((p) => p.valor === app.presupuesto)?.label ?? "Sin límite"}
         </div>
         {dropdown === "presu" && (
           <DropdownPanel minWidth="190px">
             {presupuestos.map((b) => (
               <DropdownItem
-                key={b}
-                active={b === app.presupuesto}
-                label={b === "Sin límite" ? "Sin límite" : `Hasta ${b}`}
+                key={b.label}
+                active={b.valor === app.presupuesto}
+                label={b.label}
                 onPick={() => {
-                  app.set({ presupuesto: b });
+                  app.set({ presupuesto: b.valor });
                   setDropdown(null);
                 }}
               />

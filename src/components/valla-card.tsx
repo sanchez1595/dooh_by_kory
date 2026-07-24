@@ -5,19 +5,34 @@ import { useApp } from "@/context/app-context";
 import type { Valla } from "@/data/types";
 import { fmt, fmtM } from "@/lib/format";
 import { MedicionBadge } from "@/components/medicion-badge";
+import { getNivelPrecio, labelNivel, type Ajuste } from "@/lib/ajuste";
 
 export function VallaCard({
   valla,
   vistaInfo,
   compact = false,
+  ajuste,
+  universo,
 }: {
   valla: Valla;
   vistaInfo?: string;
   compact?: boolean;
+  /** Relación con el presupuesto declarado (W17). */
+  ajuste?: Ajuste;
+  /** Catálogo de referencia para situar el precio contra su propio tipo. */
+  universo?: Valla[];
 }) {
   const router = useRouter();
   const { fav, toggleFav, set } = useApp();
   const esFav = !!fav[valla.id];
+  const nivel = universo ? getNivelPrecio(valla, universo) : null;
+
+  const ajusteCls =
+    ajuste?.estado === "cabe"
+      ? "bg-[#ECFDF5] text-[#16A34A]"
+      : ajuste?.estado === "parcial"
+        ? "bg-[#FFF7ED] text-[#D97706]"
+        : "bg-slate-100 text-slate-500";
 
   return (
     <div
@@ -84,10 +99,29 @@ export function VallaCard({
             <MedicionBadge valla={valla} compact />
           </span>
           {vistaInfo && <span className="truncate text-[10.5px] text-slate-500">{vistaInfo}</span>}
-          <span className="mt-0.5 text-[13.5px] text-ink">
-            <b className="font-mono font-bold">{fmtM(valla.precio)}</b>{" "}
+          <span className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-[13.5px] text-ink">
+            <b className="font-mono font-bold">{fmtM(valla.precio)}</b>
             <span className="text-[10.5px] text-slate-500">COP /día</span>
+            {nivel && (
+              <span
+                className={`rounded-full px-1.5 py-[1px] text-[9.5px] font-bold ${
+                  nivel === "bajo"
+                    ? "bg-[#ECFDF5] text-[#16A34A]"
+                    : nivel === "premium"
+                      ? "bg-kory-tint text-kory"
+                      : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {labelNivel[nivel]}
+              </span>
+            )}
           </span>
+          {ajuste && (
+            <span className={`mt-1 w-fit rounded-full px-2 py-[2px] text-[10px] font-bold ${ajusteCls}`}>
+              {ajuste.estado === "cabe" ? "✓ " : ajuste.estado === "parcial" ? "◑ " : ""}
+              {ajuste.label}
+            </span>
+          )}
         </div>
       ) : (
         <div className="flex flex-col gap-1.5 px-4 pt-3.5 pb-4">
