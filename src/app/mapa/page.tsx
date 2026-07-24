@@ -17,6 +17,85 @@ import { RealMap } from "@/components/real-map";
 // y tarjeta de selección anclada al mapa.
 
 type CiudadMapa = "Bogotá" | "Medellín";
+type Menu = "ciudad" | "tipo" | "entorno" | "presu" | null;
+
+function Chevron({ abierto }: { abierto: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className={`h-3 w-3 shrink-0 text-slate-400 transition-transform ${abierto ? "rotate-180" : ""}`}
+      strokeWidth={2.4}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+// Pill de filtro con etiqueta + valor visible (Norman: el estado del sistema
+// siempre a la vista) y panel de opciones (Hick: las opciones viven en el
+// menú, no en la barra). Mismo lenguaje visual que el buscador del inicio.
+function FiltroPill({
+  id,
+  etiqueta,
+  valor,
+  activo,
+  abierto,
+  onToggle,
+  opciones,
+}: {
+  id: Menu;
+  etiqueta: string;
+  valor: string;
+  activo: boolean;
+  abierto: boolean;
+  onToggle: (m: Menu) => void;
+  opciones: Array<{ label: string; activa: boolean; onPick: () => void }>;
+}) {
+  return (
+    <div className="relative" data-filtros>
+      <button
+        onClick={() => onToggle(abierto ? null : id)}
+        aria-expanded={abierto}
+        className={`flex cursor-pointer items-center gap-2 rounded-full border py-1.5 pr-3 pl-4 transition-colors ${
+          activo
+            ? "border-kory bg-kory-pale"
+            : "border-slate-200 bg-white hover:border-lavender-strong"
+        }`}
+      >
+        <span className="flex flex-col items-start leading-none">
+          <span className="text-[9px] font-bold tracking-[0.08em] text-slate-400 uppercase">
+            {etiqueta}
+          </span>
+          <span className={`mt-[3px] text-[12.5px] font-bold ${activo ? "text-kory" : "text-ink"}`}>
+            {valor}
+          </span>
+        </span>
+        <Chevron abierto={abierto} />
+      </button>
+      {abierto && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-[calc(100%+8px)] left-0 z-30 min-w-[190px] rounded-xl border border-slate-200 bg-white p-1.5 shadow-dropdown"
+        >
+          {opciones.map((o) => (
+            <button
+              key={o.label}
+              onClick={() => o.onPick()}
+              className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-left text-[13px] font-semibold hover:bg-kory-pale ${
+                o.activa ? "bg-kory-tint text-kory" : "text-slate-700"
+              }`}
+            >
+              {o.label}
+              <span className="text-xs text-kory">{o.activa ? "✓" : ""}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const CARDINALES = ["norte", "noreste", "este", "sureste", "sur", "suroeste", "oeste", "noroeste"];
 
@@ -43,6 +122,14 @@ export default function MapaPage() {
   const [mapSel, setMapSel] = useState<number | null>(null);
   const [mapHover, setMapHover] = useState<number | null>(null);
   const [q, setQ] = useState("");
+  const [menu, setMenu] = useState<Menu>(null);
+
+  const filtrosActivos =
+    app.ciudad !== "Todas" ||
+    app.cat !== "Todas" ||
+    app.entorno !== "Todos" ||
+    app.presupuesto !== "Sin límite" ||
+    app.soloVision;
 
   // Búsqueda inteligente: intención parseada + términos libres sobre
   // los filtros ya activos. Los pins del mapa reflejan el resultado.
@@ -76,7 +163,12 @@ export default function MapaPage() {
   const desde = vallas.length ? Math.min(...vallas.map((v) => v.precio)) : 0;
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col overflow-hidden">
+    <div
+      onClick={(e) => {
+        if (!(e.target as HTMLElement).closest("[data-filtros]")) setMenu(null);
+      }}
+      className="flex h-[calc(100vh-64px)] flex-col overflow-hidden"
+    >
       {/* Toggle Lista/Mapa — solo móvil */}
       <div className="flex justify-center border-b border-slate-200 bg-white py-2 md:hidden">
         <div className="flex overflow-hidden rounded-full border border-slate-200">
@@ -93,88 +185,12 @@ export default function MapaPage() {
           ))}
         </div>
       </div>
-      {/* Barra de filtros (Tesler: la complejidad no vuelve a Inicio) */}
-      <div className="hidden items-center gap-2 overflow-x-auto border-b border-slate-200 bg-white px-5 py-3 md:flex">
-        {ciudades.map((c) => (
-          <button
-            key={c}
-            onClick={() => {
-              app.set({ ciudad: c });
-              if (c !== "Todas") cambiarCiudad(c as CiudadMapa);
-            }}
-            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-              app.ciudad === c
-                ? "border-ink bg-ink text-white"
-                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
-            }`}
-          >
-            {c === "Todas" ? "Todas las ciudades" : c}
-          </button>
-        ))}
-        <span className="h-5 w-px shrink-0 bg-slate-200" />
-        {categorias.map((c) => (
-          <button
-            key={c}
-            onClick={() => app.set({ cat: c })}
-            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-              app.cat === c
-                ? "border-ink bg-ink text-white"
-                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
-            }`}
-          >
-            {c === "Todas" ? "Todos los tipos" : c}
-          </button>
-        ))}
-        <span className="h-5 w-px shrink-0 bg-slate-200" />
-        {(["exterior", "interior"] as const).map((e) => (
-          <button
-            key={e}
-            onClick={() => app.set({ entorno: app.entorno === e ? "Todos" : e })}
-            aria-pressed={app.entorno === e}
-            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition-colors ${
-              app.entorno === e
-                ? "border-ink bg-ink text-white"
-                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
-            }`}
-          >
-            {e}
-          </button>
-        ))}
-        <span className="h-5 w-px shrink-0 bg-slate-200" />
-        <button
-          onClick={() => app.set({ soloVision: !app.soloVision })}
-          aria-pressed={app.soloVision}
-          className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-            app.soloVision
-              ? "border-[#16A34A] bg-[#ECFDF5] text-[#16A34A]"
-              : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
-          }`}
-        >
-          ● Solo Kory Vision
-        </button>
-        <span className="h-5 w-px shrink-0 bg-slate-200" />
-        {presupuestos.map((p) => (
-          <button
-            key={p}
-            onClick={() => app.set({ presupuesto: p })}
-            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-              app.presupuesto === p
-                ? "border-ink bg-ink text-white"
-                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
-            }`}
-          >
-            {p === "Sin límite" ? "Sin límite" : `Hasta ${p}`}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-        {/* Lista */}
-        <div
-          className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-6 pt-5 pb-[90px] md:block`}
-        >
-          {/* Búsqueda inteligente Kory IA */}
-          <div className="mb-3 flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-4 shadow-card transition-colors focus-within:border-kory">
+      {/* Barra de búsqueda + filtros. La búsqueda Kory IA es el elemento
+          primario (patrón F, happy path); los filtros son pills con estado
+          visible y opciones en menú (Hick + Norman: visibilidad). */}
+      <div className="border-b border-slate-200 bg-white px-5 py-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-[240px] flex-1 items-center gap-2.5 rounded-full border border-slate-200 bg-white px-4 transition-colors focus-within:border-kory">
             <span className="shrink-0 text-[13px]">✨</span>
             <input
               value={q}
@@ -186,7 +202,7 @@ export default function MapaPage() {
               }}
               placeholder='Busca con Kory IA: "interiores en Medellín bajo $1,5M"'
               aria-label="Búsqueda inteligente"
-              className="h-11 w-full min-w-0 bg-transparent text-[13.5px] text-ink outline-none placeholder:text-slate-400"
+              className="h-10 w-full min-w-0 bg-transparent text-[13.5px] text-ink outline-none placeholder:text-slate-400"
             />
             {q && (
               <button
@@ -198,20 +214,111 @@ export default function MapaPage() {
               </button>
             )}
           </div>
-          {q && busq.etiquetas.length > 0 && (
-            <div className="mb-4 flex flex-wrap items-center gap-1.5 text-[11.5px]">
-              <span className="font-bold text-kory">Entendí:</span>
-              {busq.etiquetas.map((e) => (
-                <span
-                  key={e}
-                  className="rounded-full bg-kory-tint px-2.5 py-[3px] font-semibold text-kory"
-                >
-                  {e}
-                </span>
-              ))}
-            </div>
-          )}
 
+          <FiltroPill
+            id="ciudad"
+            etiqueta="Ciudad"
+            valor={app.ciudad === "Todas" ? "Todas" : app.ciudad}
+            activo={app.ciudad !== "Todas"}
+            abierto={menu === "ciudad"}
+            onToggle={setMenu}
+            opciones={ciudades.map((c) => ({
+              label: c === "Todas" ? "Todas las ciudades" : c,
+              activa: app.ciudad === c,
+              onPick: () => {
+                app.set({ ciudad: c });
+                if (c !== "Todas") cambiarCiudad(c as CiudadMapa);
+                setMenu(null);
+              },
+            }))}
+          />
+          <FiltroPill
+            id="tipo"
+            etiqueta="Tipo"
+            valor={app.cat === "Todas" ? "Todos" : app.cat}
+            activo={app.cat !== "Todas"}
+            abierto={menu === "tipo"}
+            onToggle={setMenu}
+            opciones={categorias.map((c) => ({
+              label: c === "Todas" ? "Todos los tipos" : c,
+              activa: app.cat === c,
+              onPick: () => {
+                app.set({ cat: c });
+                setMenu(null);
+              },
+            }))}
+          />
+          <FiltroPill
+            id="entorno"
+            etiqueta="Entorno"
+            valor={
+              app.entorno === "Todos" ? "Todos" : app.entorno === "exterior" ? "Exterior" : "Interior"
+            }
+            activo={app.entorno !== "Todos"}
+            abierto={menu === "entorno"}
+            onToggle={setMenu}
+            opciones={(["Todos", "exterior", "interior"] as const).map((e) => ({
+              label: e === "Todos" ? "Interior y exterior" : e === "exterior" ? "Exterior" : "Interior",
+              activa: app.entorno === e,
+              onPick: () => {
+                app.set({ entorno: e });
+                setMenu(null);
+              },
+            }))}
+          />
+          <FiltroPill
+            id="presu"
+            etiqueta="Presupuesto"
+            valor={app.presupuesto === "Sin límite" ? "Sin límite" : `Hasta ${app.presupuesto}`}
+            activo={app.presupuesto !== "Sin límite"}
+            abierto={menu === "presu"}
+            onToggle={setMenu}
+            opciones={presupuestos.map((p) => ({
+              label: p === "Sin límite" ? "Sin límite" : `Hasta ${p}`,
+              activa: app.presupuesto === p,
+              onPick: () => {
+                app.set({ presupuesto: p });
+                setMenu(null);
+              },
+            }))}
+          />
+          <button
+            onClick={() => app.set({ soloVision: !app.soloVision })}
+            aria-pressed={app.soloVision}
+            className={`cursor-pointer rounded-full border px-3.5 py-2.5 text-xs font-bold transition-colors ${
+              app.soloVision
+                ? "border-[#16A34A] bg-[#ECFDF5] text-[#16A34A]"
+                : "border-slate-200 bg-white text-slate-600 hover:border-lavender-strong"
+            }`}
+          >
+            ● Kory Vision
+          </button>
+          {filtrosActivos && (
+            <button
+              onClick={app.resetFiltros}
+              className="cursor-pointer text-xs font-semibold text-kory hover:underline"
+            >
+              Restablecer
+            </button>
+          )}
+        </div>
+        {q && busq.etiquetas.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11.5px]">
+            <span className="font-bold text-kory">Entendí:</span>
+            {busq.etiquetas.map((e) => (
+              <span key={e} className="rounded-full bg-kory-tint px-2.5 py-[3px] font-semibold text-kory">
+                {e}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        {/* Lista */}
+        <div
+          className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-6 pt-5 pb-[90px] md:block`}
+        >
           {/* Resumen del inventario filtrado */}
           <div className="mb-4 grid grid-cols-3 gap-2.5">
             {[
@@ -236,7 +343,7 @@ export default function MapaPage() {
               {fmtDia(app.inicioDia)} – {fmtDia(finDia)} · los precios incluyen el servicio del 8%
             </span>
           </div>
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3.5 2xl:grid-cols-3">
             {vallas.map((v) => (
               <div
                 key={v.id}
@@ -246,7 +353,11 @@ export default function MapaPage() {
                 }}
                 onMouseLeave={() => setMapHover(null)}
               >
-                <VallaCard valla={v} vistaInfo={`${vistaLabel(v)} · ≈ ${v.alcance ?? 300} m`} />
+                <VallaCard
+                  valla={v}
+                  compact
+                  vistaInfo={`${vistaLabel(v)} · ≈ ${v.alcance ?? 300} m`}
+                />
               </div>
             ))}
           </div>
