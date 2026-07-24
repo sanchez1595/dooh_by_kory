@@ -50,9 +50,7 @@ export default function MiCampanaPage() {
           </p>
         </div>
         <button
-          onClick={() =>
-            app.showToast("Certificado de emisión generado — 168 spots verificados con foto y hora")
-          }
+          onClick={() => app.openModal("certificado")}
           className="inline-flex h-10 cursor-pointer items-center gap-[7px] rounded-[10px] border border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700 hover:border-lavender-strong hover:bg-kory-pale"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-[15px] w-[15px]" strokeWidth={2}>
@@ -60,7 +58,7 @@ export default function MiCampanaPage() {
             <path d="m7 10 5 5 5-5" />
             <path d="M12 15V3" />
           </svg>
-          Descargar certificado de emisión
+          Ver certificado de emisión
         </button>
       </div>
 

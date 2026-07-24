@@ -16,13 +16,17 @@ export function DemoSwitcher() {
     { href: "/", label: "Inicio" },
     { href: "/mapa", label: "Mapa" },
     { href: `/valla/${vallaId}`, label: "Detalle", match: "/valla" },
+    { href: "/combo/norte-bogota", label: "Combo", match: "/combo" },
     { href: "/checkout", label: "Checkout" },
     { href: "/confirmacion", label: "Confirmación" },
     { href: "/mis-campanas", label: "Mis campañas" },
     { href: "/mi-campana", label: "En vivo" },
     { href: "/guardados", label: "Guardados" },
+    { href: "/cuanto-cuesta", label: "Precios" },
+    { href: "/para-redes", label: "Para redes" },
     { href: "/panel", label: "Panel dueño" },
     { href: "/publicar", label: "Publicar" },
+    { href: "/panel/widget", label: "Widget" },
   ];
 
   if (!abierto) {

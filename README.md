@@ -22,17 +22,21 @@ y es responsive: en móvil navega una bottom-nav.
 
 | Ruta | Pantalla | Modo |
 |---|---|---|
-| `/` | Inicio · explorar y buscar pantallas | Anunciante |
+| `/` | Inicio · explorar, buscar, combos por objetivo | Anunciante |
 | `/mapa` | Mapa con pins y lista (toggle Lista/Mapa en móvil) | Anunciante |
-| `/valla/[id]` | Detalle + tarjeta de reserva + similares | Anunciante |
+| `/valla/[id]` | Detalle + tarjeta de reserva + medición honesta + similares | Anunciante |
+| `/combo/[id]` | Combo multi-pantalla: mapa A·B·C, ahorro, un checkout | Anunciante |
 | `/guardados` | Favoritos (corazones) | Anunciante |
 | `/checkout` | Confirmación de campaña (creativo, facturación, pago) | Anunciante |
 | `/confirmacion` | Solicitud enviada | Anunciante |
 | `/mis-campanas` | Historial con estados (al aire / en revisión / rechazada / finalizada) | Anunciante |
-| `/mi-campana` | Campaña al aire en vivo | Anunciante |
+| `/mi-campana` | Campaña al aire en vivo + certificado de emisión | Anunciante |
+| `/cuanto-cuesta` | Calculadora pública de precios (SEO, sin registro) | — |
+| `/para-redes` | B2B: tiers Marketplace / PRO / White-label + preview de marca | — |
 | `/panel` | Dashboard del dueño de pantallas | Dueño |
-| `/panel/pantalla/[id]` | Gestión de pantalla (tarifas, disponibilidad, fotos, pausar) | Dueño |
+| `/panel/pantalla/[id]` | Gestión de pantalla (tarifas, disponibilidad, fotos, dispositivos) | Dueño |
 | `/panel/ingresos` | Payouts: próximo pago, historial, cuenta | Dueño |
+| `/panel/widget` | Kory Embed: widget de reserva para el sitio del dueño | Dueño |
 | `/publicar` | Wizard de publicación (4 pasos, preview viva) | Dueño |
 | `/entrar` | Selector de rol (login de demo) | — |
 | `/correos` | Kit: previews de correos transaccionales | — |

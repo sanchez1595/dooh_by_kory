@@ -8,7 +8,7 @@ import type { Presupuesto } from "@/data/catalogo";
 // Es estado de UI puro: sobrevive a la navegación entre páginas pero no se
 // persiste. Con backend, parte de esto pasará a Firestore/auth.
 
-export type ModalId = "fotos" | "solicitud" | "como" | "resenas" | null;
+export type ModalId = "fotos" | "solicitud" | "como" | "resenas" | "brief" | "certificado" | null;
 
 export type Rol = "anunciante" | "dueno";
 
@@ -22,6 +22,8 @@ interface AppState {
   ciudad: Ciudad;
   cat: TipoValla | "Todas";
   presupuesto: Presupuesto;
+  /** Filtro: solo pantallas con medición Kory Vision */
+  soloVision: boolean;
   dias: number;
   spots: number;
   inicioDia: number;
@@ -66,6 +68,7 @@ const initialState: AppState = {
   ciudad: "Todas",
   cat: "Todas",
   presupuesto: "Sin límite",
+  soloVision: false,
   dias: 14,
   spots: 6,
   inicioDia: 12,
@@ -130,6 +133,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ciudad: "Todas",
       cat: "Todas",
       presupuesto: "Sin límite",
+      soloVision: false,
       dias: 14,
     }));
   }, []);

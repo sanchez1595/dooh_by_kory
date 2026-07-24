@@ -30,6 +30,7 @@ export function Navbar() {
         { href: "/panel", label: "Panel", badge: 0 },
         { href: "/publicar", label: "Publicar valla", badge: 0 },
         { href: "/panel/ingresos", label: "Ingresos", badge: 0 },
+        { href: "/panel/widget", label: "Widget", badge: 0 },
       ]
     : [
         { href: "/", label: "Explorar", badge: 0 },

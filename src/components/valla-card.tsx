@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import type { Valla } from "@/data/types";
 import { fmt } from "@/lib/format";
+import { MedicionBadge } from "@/components/medicion-badge";
 
 export function VallaCard({ valla }: { valla: Valla }) {
   const router = useRouter();
@@ -59,12 +60,13 @@ export function VallaCard({ valla }: { valla: Valla }) {
           </span>
         </div>
         <span className="text-[12.5px] text-slate-500">{valla.ubicacion}</span>
-        <span className="inline-flex items-center gap-[5px] text-xs text-slate-600">
+        <span className="inline-flex flex-wrap items-center gap-[5px] text-xs text-slate-600">
           <svg viewBox="0 0 24 24" fill="none" stroke="#724CF5" className="h-[13px] w-[13px]" strokeWidth={2}>
             <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
             <circle cx="12" cy="12" r="3" />
           </svg>
           <b className="font-mono font-semibold">{valla.imp}</b>&nbsp;impresiones/día
+          <MedicionBadge valla={valla} compact />
         </span>
         <div className="mt-1 text-[15px] text-ink">
           <b className="font-mono font-bold">{fmt(valla.precio)}</b>{" "}

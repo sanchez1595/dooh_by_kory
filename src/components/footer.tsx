@@ -22,9 +22,12 @@ export function Footer() {
           <Link href="/panel" className="text-[#9CA3AF] hover:text-white">
             Para dueños
           </Link>
-          <button onClick={() => openModal("como")} className="cursor-pointer text-[#9CA3AF] hover:text-white">
+          <Link href="/para-redes" className="text-[#9CA3AF] hover:text-white">
+            Para redes
+          </Link>
+          <Link href="/cuanto-cuesta" className="text-[#9CA3AF] hover:text-white">
             Precios
-          </button>
+          </Link>
           <button onClick={() => showToast(soporteToast)} className="cursor-pointer text-[#9CA3AF] hover:text-white">
             Soporte
           </button>

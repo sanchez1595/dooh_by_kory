@@ -16,6 +16,7 @@ import {
 } from "@/data";
 import { useTodasLasVallas, useValla } from "@/hooks/use-vallas";
 import { VallaCard } from "@/components/valla-card";
+import { MedicionBadge, medicionNota } from "@/components/medicion-badge";
 import { fmtDia } from "@/lib/format";
 import { getQuote } from "@/lib/pricing";
 
@@ -170,20 +171,20 @@ export default function DetallePage() {
 
             {/* Audiencia */}
             <div>
-              <h3 className="mb-2 text-[19px] font-bold">Audiencia estimada</h3>
+              <h3 className="mb-2 text-[19px] font-bold">Audiencia</h3>
               <div className="mb-2 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-[5px] rounded-full bg-kory-tint px-2.5 py-[3px] text-[10.5px] font-bold text-kory">
-                  ✨ Medido con Kory Vision
-                </span>
-                <span className="inline-flex items-center gap-[5px] rounded-full bg-[#ECFDF5] px-2.5 py-[3px] text-[10.5px] font-semibold text-[#16A34A]">
-                  <span className="h-[5px] w-[5px] rounded-full bg-current" />
-                  Cámara en línea
-                </span>
+                <MedicionBadge valla={sel} />
+                {sel.medicion === "vision" && (
+                  <span className="inline-flex items-center gap-[5px] rounded-full bg-[#ECFDF5] px-2.5 py-[3px] text-[10.5px] font-semibold text-[#16A34A]">
+                    <span className="h-[5px] w-[5px] rounded-full bg-current" />
+                    Cámara en línea
+                  </span>
+                )}
               </div>
               <p className="mb-4 text-sm leading-[1.7] text-slate-600">
-                Nuestra cámara con IA cuenta vehículos y transeúntes en tiempo real, de forma
-                anónima. La pantalla sirve <b className="text-ink">{sel.imp}</b> impresiones diarias
-                certificadas, con picos entre 7–9 am y 5–8 pm.
+                <b className="text-ink">¿Cómo {sel.medicion === "vision" ? "medimos" : "estimamos"}?</b>{" "}
+                {medicionNota(sel)} La pantalla sirve <b className="text-ink">{sel.imp}</b>{" "}
+                impresiones diarias, con picos entre 7–9 am y 5–8 pm.
               </p>
               <div className="flex h-[88px] items-end gap-[5px] rounded-xl border border-slate-200 bg-white px-4 py-3.5">
                 {perfilHorario.map((h, i) => (
@@ -377,7 +378,8 @@ export default function DetallePage() {
                 <circle cx="12" cy="12" r="3" />
               </svg>
               <div className="text-[12.5px] leading-[1.45] text-slate-700">
-                <b className="font-mono">≈ {quote.impTotalesF}</b> impresiones estimadas · CPM{" "}
+                <b className="font-mono">≈ {quote.impTotalesF}</b> impresiones{" "}
+                {sel.medicion === "vision" ? "medidas" : "estimadas"} · CPM{" "}
                 <b className="font-mono">{quote.cpmF}</b>{" "}
                 <span className="font-semibold text-[#16A34A]">· 62% bajo el promedio OOH</span>
               </div>

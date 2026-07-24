@@ -18,6 +18,7 @@ export const vallas: Valla[] = [
     grad: "linear-gradient(135deg,#1A0A3E,#724CF5)",
     x: "22%",
     y: "26%",
+    medicion: "vision",
   },
   {
     id: 2,
@@ -52,6 +53,7 @@ export const vallas: Valla[] = [
     grad: "linear-gradient(135deg,#0D0D0D,#4C1D95)",
     x: "12%",
     y: "55%",
+    medicion: "vision",
   },
   {
     id: 4,
@@ -103,6 +105,7 @@ export const vallas: Valla[] = [
     grad: "linear-gradient(135deg,#1A0A3E,#B794FF)",
     x: "30%",
     y: "70%",
+    medicion: "vision",
   },
   {
     id: 7,

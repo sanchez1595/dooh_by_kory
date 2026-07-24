@@ -22,6 +22,8 @@ export interface Valla {
   /** Posición del pin en el mapa ilustrativo (porcentajes) */
   x: string;
   y: string;
+  /** "vision" = cámara Kory Vision instalada; ausente = impresiones estimadas con datos de movilidad */
+  medicion?: "vision";
 }
 
 export interface Resena {
@@ -109,6 +111,25 @@ export interface Campana {
   /** Solo campañas rechazadas */
   reembolso?: string;
   motivoRechazo?: string;
+}
+
+export interface Dispositivo {
+  /** Coincide con MiValla.id */
+  pantallaId: string;
+  estado: "en-linea" | "sin-conexion";
+  /** "latido hace 12 s" · "sin conexión hace 2 h" */
+  detalle: string;
+  spotsHoy: string;
+  version: string;
+}
+
+export interface Combo {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  vallaIds: number[];
+  /** Descuento del paquete vs comprar por separado (0–1). */
+  ahorro: number;
 }
 
 export interface Correo {

@@ -260,6 +260,20 @@ export default function CheckoutPage() {
             <span>✓ Al aire en 24 h</span>
             <span>✓ Reporte en vivo</span>
           </div>
+          {quote.total > 20e6 && (
+            <div className="rounded-xl border border-lavender-border bg-kory-pale px-4 py-3.5">
+              <div className="text-[12.5px] leading-[1.55] text-slate-700">
+                <b>Tu pedido supera $20M.</b> Un asesor puede optimizarte el mix de pantallas sin
+                costo — o continúa tú mismo, como vas.
+              </div>
+              <button
+                onClick={() => app.openModal("brief")}
+                className="mt-2.5 h-9 cursor-pointer rounded-[9px] border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Hablar con un asesor
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

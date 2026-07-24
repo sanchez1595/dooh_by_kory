@@ -15,3 +15,5 @@ export * from "./campanas";
 export * from "./dueno";
 export * from "./campana";
 export * from "./correos";
+export * from "./dispositivos";
+export * from "./combos";
