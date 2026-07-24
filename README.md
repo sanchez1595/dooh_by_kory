@@ -23,7 +23,7 @@ y es responsive: en móvil navega una bottom-nav.
 | Ruta | Pantalla | Modo |
 |---|---|---|
 | `/` | Inicio · explorar, buscar, combos por objetivo | Anunciante |
-| `/mapa` | Mapa con pins y lista (toggle Lista/Mapa en móvil) | Anunciante |
+| `/mapa` | Mapa real (MapLibre + OpenFreeMap) con dirección de vista y radios de visibilidad | Anunciante |
 | `/valla/[id]` | Detalle + tarjeta de reserva + medición honesta + similares | Anunciante |
 | `/combo/[id]` | Combo multi-pantalla: mapa A·B·C, ahorro, un checkout | Anunciante |
 | `/guardados` | Favoritos (corazones) | Anunciante |
@@ -61,5 +61,11 @@ wireframes aprobados y plan de fases).
 
 - Firebase: Auth, Firestore (vallas, campañas, solicitudes), Storage
   (creativos) y Functions (correos, pagos).
-- Mapa real (Google Maps / Mapbox) en `/mapa`.
 - Pasarela de pagos (tarjeta / PSE).
+
+El mapa de `/mapa` ya es real: **MapLibre GL JS** (BSD) con vector tiles de
+**OpenFreeMap** (sin API key, uso comercial permitido). Para producción con
+SLA propio: self-host con Protomaps/PMTiles (extracto de Colombia en un
+bucket). Las capas de dirección de vista y radio de visibilidad son GeoJSON
+generado desde `src/data/vallas.ts` (campos `vista`, `dobleCara`, `alcance`,
+`lng`, `lat`).

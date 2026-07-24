@@ -30,6 +30,9 @@ export interface Valla {
   dobleCara?: boolean;
   /** Radio de visibilidad aproximado en metros */
   alcance?: number;
+  /** Coordenadas reales (WGS84) para el mapa MapLibre */
+  lng?: number;
+  lat?: number;
 }
 
 export interface Resena {

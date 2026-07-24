@@ -22,6 +22,8 @@ export const vallas: Valla[] = [
     vista: 0,
     dobleCara: true,
     alcance: 450,
+    lng: -74.0538,
+    lat: 4.6862,
   },
   {
     id: 2,
@@ -42,6 +44,8 @@ export const vallas: Valla[] = [
     vista: 0,
     dobleCara: true,
     alcance: 380,
+    lng: -75.5674,
+    lat: 6.2109,
   },
   {
     id: 3,
@@ -62,6 +66,8 @@ export const vallas: Valla[] = [
     medicion: "vision",
     vista: 90,
     alcance: 260,
+    lng: -74.1439,
+    lat: 4.701,
   },
   {
     id: 4,
@@ -81,6 +87,8 @@ export const vallas: Valla[] = [
     y: "34%",
     vista: 200,
     alcance: 300,
+    lng: -74.0532,
+    lat: 4.6668,
   },
   {
     id: 5,
@@ -100,6 +108,8 @@ export const vallas: Valla[] = [
     y: "38%",
     vista: 340,
     alcance: 320,
+    lng: -75.5906,
+    lat: 6.257,
   },
   {
     id: 6,
@@ -121,6 +131,8 @@ export const vallas: Valla[] = [
     vista: 30,
     dobleCara: true,
     alcance: 520,
+    lng: -74.0785,
+    lat: 4.6318,
   },
   {
     id: 7,
@@ -141,6 +153,8 @@ export const vallas: Valla[] = [
     vista: 10,
     dobleCara: true,
     alcance: 350,
+    lng: -75.5757,
+    lat: 6.1988,
   },
   {
     id: 8,
@@ -160,6 +174,8 @@ export const vallas: Valla[] = [
     y: "80%",
     vista: 315,
     alcance: 180,
+    lng: -74.1275,
+    lat: 4.5807,
   },
 ];
 
