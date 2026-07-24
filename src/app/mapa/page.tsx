@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import { useVallasFiltradas } from "@/hooks/use-vallas-filtradas";
+import { categorias, ciudades, presupuestos } from "@/data";
 import type { Valla } from "@/data/types";
 import { fmt, fmtDia, fmtM, fmtMillones } from "@/lib/format";
 import { MedicionBadge } from "@/components/medicion-badge";
+import { VallaCard } from "@/components/valla-card";
 import { RealMap } from "@/components/real-map";
 
 // Mapa real (MapLibre + OpenFreeMap) con dirección de vista y radio de
@@ -74,10 +76,70 @@ export default function MapaPage() {
           ))}
         </div>
       </div>
-      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[440px_1fr]">
+      {/* Barra de filtros (Tesler: la complejidad no vuelve a Inicio) */}
+      <div className="hidden items-center gap-2 overflow-x-auto border-b border-slate-200 bg-white px-5 py-3 md:flex">
+        {ciudades.map((c) => (
+          <button
+            key={c}
+            onClick={() => {
+              app.set({ ciudad: c });
+              if (c !== "Todas") cambiarCiudad(c as CiudadMapa);
+            }}
+            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              app.ciudad === c
+                ? "border-ink bg-ink text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
+            }`}
+          >
+            {c === "Todas" ? "Todas las ciudades" : c}
+          </button>
+        ))}
+        <span className="h-5 w-px shrink-0 bg-slate-200" />
+        {categorias.map((c) => (
+          <button
+            key={c}
+            onClick={() => app.set({ cat: c })}
+            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              app.cat === c
+                ? "border-ink bg-ink text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
+            }`}
+          >
+            {c === "Todas" ? "Todos los tipos" : c}
+          </button>
+        ))}
+        <span className="h-5 w-px shrink-0 bg-slate-200" />
+        <button
+          onClick={() => app.set({ soloVision: !app.soloVision })}
+          aria-pressed={app.soloVision}
+          className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+            app.soloVision
+              ? "border-[#16A34A] bg-[#ECFDF5] text-[#16A34A]"
+              : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
+          }`}
+        >
+          ● Solo Kory Vision
+        </button>
+        <span className="h-5 w-px shrink-0 bg-slate-200" />
+        {presupuestos.map((p) => (
+          <button
+            key={p}
+            onClick={() => app.set({ presupuesto: p })}
+            className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              app.presupuesto === p
+                ? "border-ink bg-ink text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-lavender-strong"
+            }`}
+          >
+            {p === "Sin límite" ? "Sin límite" : `Hasta ${p}`}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         {/* Lista */}
         <div
-          className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-5 pt-5 pb-[90px] md:block`}
+          className={`${vista === "lista" ? "block" : "hidden"} overflow-y-auto border-r border-slate-200 bg-white px-6 pt-5 pb-[90px] md:block`}
         >
           {/* Resumen del inventario filtrado */}
           <div className="mb-4 grid grid-cols-3 gap-2.5">
@@ -94,48 +156,37 @@ export default function MapaPage() {
               </div>
             ))}
           </div>
-          <div className="mb-3.5 text-[13px] text-slate-500">
-            {fmtDia(app.inicioDia)} – {fmtDia(finDia)} ·{" "}
-            {app.presupuesto === "Sin límite" ? "Sin límite" : `Hasta ${app.presupuesto}`}
+          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+            <span className="text-[15px] font-bold text-ink">
+              {vallas.length} pantalla{vallas.length !== 1 && "s"}
+              {app.ciudad !== "Todas" && ` en ${app.ciudad}`}
+            </span>
+            <span className="text-[12.5px] text-slate-500">
+              {fmtDia(app.inicioDia)} – {fmtDia(finDia)} · los precios incluyen el servicio del 8%
+            </span>
           </div>
-          <div className="flex flex-col gap-3.5">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             {vallas.map((v) => (
               <div
                 key={v.id}
-                onClick={() => abrir(v.id)}
                 onMouseEnter={() => {
                   setMapHover(v.id);
                   if (v.ciudad !== ciudadMapa) cambiarCiudad(v.ciudad as CiudadMapa);
                 }}
                 onMouseLeave={() => setMapHover(null)}
-                className="grid cursor-pointer grid-cols-[132px_1fr] gap-3.5 overflow-hidden rounded-xl border border-slate-200 bg-white hover:border-lavender-strong hover:shadow-md"
               >
-                <div
-                  style={{ background: v.grad }}
-                  className="relative flex min-h-[100px] items-center justify-center"
-                >
-                  <span className="text-[8.5px] font-semibold tracking-[0.12em] text-white/45 uppercase">
-                    LED
-                  </span>
-                </div>
-                <div className="flex flex-col gap-[3px] py-3 pr-3">
-                  <div className="flex justify-between gap-1.5">
-                    <span className="text-[13px] font-bold">{v.nombre}</span>
-                    <span className="shrink-0 text-[11.5px] font-semibold">★ {v.rating}</span>
-                  </div>
-                  <span className="text-[11.5px] text-slate-500">{v.ubicacion}</span>
-                  <span className="font-mono text-[11px] text-slate-600">{v.imp} imp/día</span>
-                  <span className="text-[11px] text-slate-500">
-                    {vistaLabel(v)} · ≈ {v.alcance ?? 300} m
-                  </span>
-                  <span className="mt-0.5 text-[13px]">
-                    <b className="font-mono">{fmt(v.precio)}</b>{" "}
-                    <span className="text-[10.5px] text-slate-500">/día</span>
-                  </span>
-                </div>
+                <VallaCard valla={v} vistaInfo={`${vistaLabel(v)} · ≈ ${v.alcance ?? 300} m`} />
               </div>
             ))}
           </div>
+          {vallas.length === 0 && (
+            <div className="rounded-[14px] border-[1.5px] border-dashed border-lavender-border bg-[#FBFAFD] p-10 text-center text-[13.5px] text-slate-500">
+              Ninguna pantalla coincide con esos filtros.{" "}
+              <button onClick={app.resetFiltros} className="cursor-pointer font-semibold text-kory">
+                Restablecer filtros
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mapa */}

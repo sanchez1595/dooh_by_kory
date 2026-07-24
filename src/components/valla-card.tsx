@@ -6,7 +6,7 @@ import type { Valla } from "@/data/types";
 import { fmt } from "@/lib/format";
 import { MedicionBadge } from "@/components/medicion-badge";
 
-export function VallaCard({ valla }: { valla: Valla }) {
+export function VallaCard({ valla, vistaInfo }: { valla: Valla; vistaInfo?: string }) {
   const router = useRouter();
   const { fav, toggleFav, set } = useApp();
   const esFav = !!fav[valla.id];
@@ -68,6 +68,7 @@ export function VallaCard({ valla }: { valla: Valla }) {
           <b className="font-mono font-semibold">{valla.imp}</b>&nbsp;impresiones/día
           <MedicionBadge valla={valla} compact />
         </span>
+        {vistaInfo && <span className="text-[11.5px] text-slate-500">{vistaInfo}</span>}
         <div className="mt-1 text-[15px] text-ink">
           <b className="font-mono font-bold">{fmt(valla.precio)}</b>{" "}
           <span className="text-xs text-slate-500">COP /día</span>
