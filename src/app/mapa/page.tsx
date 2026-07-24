@@ -93,7 +93,7 @@ export default function MapaPage() {
   const base = useVallasFiltradas();
   const conteos = useConteos();
 
-  const [vista, setVista] = useState<"lista" | "mapa">("lista");
+  const [vista, setVista] = useState<"lista" | "mapa">("mapa");
   const [ciudadMapa, setCiudadMapa] = useState<CiudadMapa>(
     app.ciudad === "Medellín" ? "Medellín" : "Bogotá",
   );
